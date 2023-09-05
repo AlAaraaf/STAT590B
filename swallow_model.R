@@ -10,7 +10,7 @@ neg_samp <- mvrnorm(n =num_samp, mu = c(0, 3), Sigma = Sigma)
 pos_samp <- mvrnorm(n = num_samp, mu = c(3,0), Sigma = Sigma)
 inputs <- rbind(neg_samp, pos_samp)
 targets <- rbind(array(0, dim = c(num_samp, 1)), array(1, dim = c(num_samp, 1)))
-plot(x = inputs[, 1], y = inputs[, 2],col =ifelse(targets[, 1] == 0, "purple", "green"))
+#plot(x = inputs[, 1], y = inputs[, 2],col =ifelse(targets[, 1] == 0, "purple", "green"))
 
 
 input_dim <- 2 # 2D example.
@@ -40,10 +40,12 @@ training_step <- function(inputs, targets) {
 
 #### training ####
 inputs <- as_tensor(inputs, dtype = "float32")
-for (step in seq(40)) {
+learning_rate = 0.1
+for (step in seq(40)) 
+{
   loss <- training_step(inputs, targets)
   cat(sprintf("Loss at step %s: %.4f", step, loss))
-
+}
   
 #### prediction ####
   
