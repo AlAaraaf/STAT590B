@@ -45,6 +45,7 @@ for (step in seq(40))
 {
   loss <- training_step(inputs, targets)
   cat(sprintf("Loss at step %s: %.4f", step, loss))
+  cat("\n")
 }
   
 #### prediction ####
