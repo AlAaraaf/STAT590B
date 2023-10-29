@@ -75,3 +75,25 @@ construct_fc_model <- function(nlayers, unitlist,
 
   return(model)
 }
+
+construct_fc_model_multiclass <- function(nlayers, unitlist,
+                               img_width = 16, img_height = 16, dropout = 0.5){
+  model <- keras_model_sequential()
+  model %>% layer_flatten(input_shape = c(img_width,img_height,3))
+
+  for (i in 1:nlayers){
+    model %>% layer_dense(units = unitlist[i], activation = 'relu')
+  }
+
+  model %>%
+    layer_dense(3, activation = 'softmax')
+
+  return(model)
+}
+
+convert_onehot <- function(dataset){
+  dataset$train$class = to_categorical(dataset$train$class)
+  dataset$test$class = to_categorical(dataset$test$class)
+
+  return(dataset)
+}
