@@ -5,6 +5,7 @@ library(tensorflow)
 tf <- import('tensorflow')
 library(keras)
 tf$config$run_functions_eagerly(T)
+library(jpeg)
 
 # set dataset
 classlist <- c('cat','dog')
@@ -14,11 +15,11 @@ folders = c('./dataset/train/','./dataset/val/')
 layerlist = c(2,4,8,12,16)
 epochs = c(10,10,10,20,20)
 unitlists =list()
-unitlists[[1]] <- c(64,32) # 2 layers
-unitlists[[2]] <- c(64,64,32,32) # 4 layers
-unitlists[[3]] <- c(rep(64,3),rep(32,5)) # 8 layers
-unitlists[[4]] <- c(rep(64,3),rep(32,6), rep(16,3)) # 12 layers
-unitlists[[5]] <- c(rep(64,3),rep(32,9), rep(16,4)) # 16 layers
+unitlists[[1]] <- c(128,64) # 2 layers
+unitlists[[2]] <- c(128,128,64,64) # 4 layers
+unitlists[[3]] <- c(rep(128,3),rep(64,5)) # 8 layers
+unitlists[[4]] <- c(rep(128,3),rep(64,6), rep(32,3)) # 12 layers
+unitlists[[5]] <- c(rep(128,3),rep(64,9), rep(32,4)) # 16 layers
 
 checkpoint_folder = './checkpoint/'
 historys = list()
