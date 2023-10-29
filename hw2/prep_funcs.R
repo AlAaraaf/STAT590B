@@ -67,7 +67,9 @@ construct_fc_model <- function(nlayers, unitlist,
   model %>% layer_flatten(input_shape = c(img_width,img_height,3))
 
   for (i in 1:nlayers){
-    model %>% layer_dense(units = unitlist[i], activation = 'relu')
+    model %>% 
+      layer_dense(units = unitlist[i], activation = 'relu') %>% 
+      layer_batch_normalization()
   }
 
   model %>%
