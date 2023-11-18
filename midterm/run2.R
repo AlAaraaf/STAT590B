@@ -34,9 +34,8 @@ for (lr in lrlist){
                                                   monitor = 'val_accuracy',
                                                   mode = 'max')
       
-      model <- build_ff_model1(layerlist[i], unitlists[[i]], 0.5)
+      model <- build_ff_model1(layerlist[i], unitlists[[i]], 0.5, T)
       model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
-                               regularizer_l2(),
                                loss = "categorical_crossentropy",
                                metrics =  list("accuracy"))
       
