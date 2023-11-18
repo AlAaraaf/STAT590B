@@ -1,26 +1,32 @@
 ##### dependencies #####
-library(reticulate)
-library(tensorflow)
-library(keras)
-library(jpeg)
-library(png)
-library(stringr)
+#library(reticulate)
+#use_condaenv('connectr')
+#library(tensorflow)
+#library(keras)
+#f <- import('tensorflow')
+#pil <- import('PIL')
+#np <- import('numpy')
+#pd <- import('pandas')
+
+#library(jpeg)
+#library(png)
+#library(stringr)
 
 
 ##### wrapped functions #####
 get.dataset1 <- function(){
-  data = read.table('All_Script_Str(1-42)Frac(51-52)Mor(53-124)-1-116.csv', 
-                    skip = 1, header = F, sep=',')
-  data[,117] = unlist(lapply(data[,117], function(x) {x-1}))
-  for (i in 1:116){
-    data[,i] = as.numeric(data[,i])
-  }
+  data = pd$read_csv('All_Script_Str(1-42)Frac(51-52)Mor(53-124)-1-116.csv')
   train_id = sample(1:(dim(data)[1]), dim(data)[1])
   data = data[train_id,]
+  
+  feature = data[,1:116]
+  class = data[,117]
+  class = unlist(lapply(class, function(x) {x-1}))
+  
   dataset = list()
   dataset$train = list()
-  dataset$train$data = data[,1:116]
-  dataset$train$class = to_categorical(data[,117])
+  dataset$train$data = np$array(data[,1:116])
+  dataset$train$class = to_categorical(class)
   
   return(dataset)
 }
@@ -96,23 +102,63 @@ get.dataset2 <- function(filelist, p){
   return(dataset)
 }
 
-build_cnn_model <- function(filter_size, dropout = 0){
-  
-  # OUTPUT
-  # model - the constructed model
+build_cnn_model1 <- function(filter_list, pool_list, dropout = 0){
+
   img_shape = c(256, 256)
   input_shape = as_tensor(c(img_shape[1], img_shape[2], 3), dtype = 'int32')
   
   model <- keras_model_sequential()
+  for (i in 1:length(filter_list)){
+    model %>% 
+      layer_conv_2d(filters = filter_list[i], kernel_size = 3, activation = 'relu') %>% 
+      layer_max_pooling_2d(pool_size = c(pool_list[i], pool_list[i]))
+  }
   model %>%
-    layer_conv_2d(filters = filter_size ,kernel_size = 3,activation = 'relu') %>%
-    layer_max_pooling_2d(pool_size = c(2,2)) %>%
     layer_dropout(rate = dropout) %>% 
     layer_flatten() %>%
     layer_dense(1, activation = 'sigmoid')
   return(model)
 }
 
+build_cnn_model_bn <- function(filter_list, pool_list, dropout = 0){
+  img_shape = c(256, 256)
+  input_shape = as_tensor(c(img_shape[1], img_shape[2], 3), dtype = 'int32')
+  
+  model <- keras_model_sequential()
+  for (i in 1:length(filter_list)){
+    model %>% 
+      layer_conv_2d(filters = filter_list[i], kernel_size = 3) %>% 
+      layer_batch_normalization() %>% 
+      layer_activation('relu') %>% 
+      layer_max_pooling_2d(pool_size = c(pool_list[i], pool_list[i]))
+  }
+  model %>%
+    layer_dropout(rate = dropout) %>% 
+    layer_flatten() %>%
+    layer_dense(1, activation = 'sigmoid')
+  return(model)
+  
+}
+
+build_cnn_model_resid <- function(filter_list, pool_list, dropout = 0){
+  model <- keras_model_sequential()
+  model %>% residual_b
+}
+
+residual_block <- function(x, filters, pooling = FALSE) {
+  residual <- x
+  x <- x |>
+    layer_conv_2d(filters, 3, activation = "relu", padding = "same") |>
+    layer_conv_2d(filters, 3, activation = "relu", padding = "same")
+  if (pooling) {
+    x <- x |> layer_max_pooling_2d(pool_size = 2, padding = "same")
+    residual <- residual |> layer_conv_2d(filters, 1, strides = 2)
+  } else if (filters != dim(residual)[4]) {
+    ## Without max pooling only project residual if number of channels has changed.
+    residual <- residual |> layer_conv_2d(filters, 1)
+  }
+  layer_add(list(x, residual))
+}
 
 
 ##### hyper params for Q1 #####
