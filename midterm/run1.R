@@ -4,6 +4,7 @@ library(tensorflow)
 library(keras)
 tf <- import('tensorflow')
 np <- import('numpy')
+pd <- import('pandas')
 source('midterm-code.R')
 setwd('/work/classtmp/carrice/STAT590B/midterm/')
 
