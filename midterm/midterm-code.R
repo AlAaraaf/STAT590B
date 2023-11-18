@@ -31,7 +31,7 @@ get.dataset1 <- function(){
   return(dataset)
 }
 
-build_ff_model1 <- function(nlayers, unitlist, dropout = 0, add_l2norm = F){
+build_ff_model1 <- function(nlayers, unitlist){
   model <- keras_model_sequential(input_shape = c(116))
   
   for (i in 1:nlayers){
@@ -39,15 +39,28 @@ build_ff_model1 <- function(nlayers, unitlist, dropout = 0, add_l2norm = F){
       layer_dense(units = unitlist[i], activation = 'relu')
   }
   
-  model %>%
-    layer_dropout(rate = dropout)
-  if (add_l2norm){
-    model %>% regularizer_l2(0.01)
-  }
   model %>% layer_dense(11, activation = 'softmax')
   
   return(model)
 }
+
+build_ff_model2 <- function(nlayers, unitlist){
+  model <- keras_model_sequential(input_shape = c(116))
+  
+  for (i in 1:nlayers){
+    model %>% 
+      layer_dense(units = unitlist[i], 
+                  activation = 'relu', 
+                  kernel_regularizer = regularizer_l1_l2(l1 = 0.01, l2 = 0.01))
+  }
+  
+  model %>% 
+    layer_dropout(rate = 0.5) %>% 
+    layer_dense(11, activation = 'softmax')
+  
+  return(model)
+}
+
 
 read.in.all.file <- function(class){
   
