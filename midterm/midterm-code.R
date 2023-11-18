@@ -120,7 +120,7 @@ get.dataset2 <- function(filelist, p){
   return(dataset)
 }
 
-build_cnn_model1 <- function(filter_list, pool_list, dropout = 0){
+build_cnn_model1 <- function(filter_list, dropout = 0){
 
   img_shape = c(256, 256)
   input_shape = as_tensor(c(img_shape[1], img_shape[2], 3), dtype = 'int32')
@@ -129,7 +129,7 @@ build_cnn_model1 <- function(filter_list, pool_list, dropout = 0){
   for (i in 1:length(filter_list)){
     model %>% 
       layer_conv_2d(filters = filter_list[i], kernel_size = 3, activation = 'relu') %>% 
-      layer_max_pooling_2d(pool_size = c(pool_list[i], pool_list[i]))
+      layer_max_pooling_2d(pool_size = 2)
   }
   model %>%
     layer_dropout(rate = dropout) %>% 
