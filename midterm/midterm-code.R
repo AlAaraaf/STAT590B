@@ -7,6 +7,7 @@
 #pil <- import('PIL')
 #np <- import('numpy')
 #pd <- import('pandas')
+checkpoint_folder = './checkpoint/'
 
 ##### wrapped functions #####
 get.dataset1 <- function(){
@@ -162,6 +163,7 @@ build_cnn_model_bn <- function(filter_list, pool_list, dropout = 0){
   input_shape = as_tensor(c(img_shape[1], img_shape[2], 3), dtype = 'int32')
   
   model <- keras_model_sequential()
+  model %>% layer_rescaling(1/255)
   for (i in 1:length(filter_list)){
     model %>% 
       layer_conv_2d(filters = filter_list[i], kernel_size = 3) %>% 
@@ -179,12 +181,36 @@ build_cnn_model_bn <- function(filter_list, pool_list, dropout = 0){
 
 build_cnn_model_resid <- function(filter_list, pool_list, dropout = 0){
   model <- keras_model_sequential()
+  model %>% layer_rescaling(1/255)
   for (i in 1:length(filter_list)){
     model %>% 
       residual_block(filters = filter_list[i], pooling = pool_list)
   }
   model %>% 
     layer_global_average_pooling_2d() %>% 
+    layer_dense(1, activation = 'sigmoid')
+  return(model)
+}
+
+build_cnn_model_sep <- function(filter_list, dropout = 0){
+  
+  img_shape = c(256, 256)
+  input_shape = as_tensor(c(img_shape[1], img_shape[2], 3), dtype = 'int32')
+  
+  model <- keras_model_sequential()
+  model %>% 
+    layer_random_flip('horizontal') %>% 
+    layer_random_rotation(0.1) %>% 
+    layer_random_zoom(0.2) %>% 
+    layer_rescaling(1/255)
+  for (i in 1:length(filter_list)){
+    model %>% 
+      layer_separable_conv_2d(filters = filter_list[i], kernel_size = 3, activation = 'relu') %>% 
+      layer_max_pooling_2d(pool_size = 2)
+  }
+  model %>%
+    layer_dropout(rate = dropout) %>% 
+    layer_flatten() %>%
     layer_dense(1, activation = 'sigmoid')
   return(model)
 }

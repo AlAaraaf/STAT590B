@@ -18,7 +18,7 @@ lrlist = c(0.001, 0.01, 0.05)
 
 metric_record = c()
 
-for (lr in lrlist){
+for (lr in lrlist[1]){
     model_name = paste(checkpoint_folder, 'q2a4_',lr,'_', sep = '')
     model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                                 save_weights_only = T,
@@ -33,14 +33,14 @@ for (lr in lrlist){
     current_history <- model |>
       fit(x = dataset2$train$data, 
           y = dataset2$train$class,
-          epochs = 20, batch_size = 128, validation_split = 0.5,
+          epochs = 10, batch_size = 128, validation_split = 0.5,
           callbacks = list(model_cp))
     val_acc = max(current_history$metrics$val_accuracy)
     current_record = c(lr, 'resid', val_acc)
     metric_record = rbind(metric_record, current_record)
 }
 
-for (lr in lrlist){
+for (lr in lrlist[1]){
   model_name = paste(checkpoint_folder, 'q2a4A_',lr,'_', sep = '')
   model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                               save_weights_only = T,
@@ -55,14 +55,14 @@ for (lr in lrlist){
   current_history <- model |>
     fit(x = dataset2$train$data, 
         y = dataset2$train$class,
-        epochs = 20, batch_size = 128, validation_split = 0.5,
+        epochs = 10, batch_size = 128, validation_split = 0.5,
         callbacks = list(model_cp))
   val_acc = max(current_history$metrics$val_accuracy)
   current_record = c(lr, 'bn', val_acc)
   metric_record = rbind(metric_record, current_record)
 }
 
-for (lr in lrlist){
+for (lr in lrlist[1]){
   model_name = paste(checkpoint_folder, 'q2a4A_',lr,'_', sep = '')
   model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                               save_weights_only = T,
@@ -77,7 +77,7 @@ for (lr in lrlist){
   current_history <- model |>
     fit(x = dataset2$train$data, 
         y = dataset2$train$class,
-        epochs = 20, batch_size = 128, validation_split = 0.5,
+        epochs = 10, batch_size = 128, validation_split = 0.5,
         callbacks = list(model_cp))
   val_acc = max(current_history$metrics$val_accuracy)
   current_record = c(lr, 'sep', val_acc)
@@ -85,6 +85,6 @@ for (lr in lrlist){
 }
 
 metric_record = data.frame(metric_record)
-colnames(metric_record) <- c('lr', 'filter', 'acc')
+colnames(metric_record) <- c('lr', 'type', 'acc')
 
-write.csv(metric_record, 'metric-cnn3.csv')
+write.csv(metric_record, 'metric-cnn4.csv')
