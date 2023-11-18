@@ -158,7 +158,7 @@ build_cnn_model_ag <- function(filter_list, dropout = 0){
   return(model)
 }
 
-build_cnn_model_bn <- function(filter_list, pool_list, dropout = 0){
+build_cnn_model_bn <- function(filter_list, dropout = 0){
   img_shape = c(256, 256)
   input_shape = as_tensor(c(img_shape[1], img_shape[2], 3), dtype = 'int32')
   
@@ -169,7 +169,7 @@ build_cnn_model_bn <- function(filter_list, pool_list, dropout = 0){
       layer_conv_2d(filters = filter_list[i], kernel_size = 3) %>% 
       layer_batch_normalization() %>% 
       layer_activation('relu') %>% 
-      layer_max_pooling_2d(pool_size = c(pool_list[i], pool_list[i]))
+      layer_max_pooling_2d(pool_size = 2)
   }
   model %>%
     layer_dropout(rate = dropout) %>% 
@@ -216,6 +216,7 @@ build_cnn_model_sep <- function(filter_list, dropout = 0){
 }
 
 residual_block <- function(x, filters, pooling = FALSE) {
+  
   residual <- x
   x <- x |>
     layer_conv_2d(filters, 3, activation = "relu", padding = "same") |>
@@ -227,6 +228,7 @@ residual_block <- function(x, filters, pooling = FALSE) {
     ## Without max pooling only project residual if number of channels has changed.
     residual <- residual |> layer_conv_2d(filters, 1)
   }
+  
   layer_add(list(x, residual))
 }
 
