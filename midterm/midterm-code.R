@@ -184,7 +184,7 @@ build_cnn_model_resid <- function(filter_list, pool_list, dropout = 0){
   model %>% layer_rescaling(1/255)
   for (i in 1:length(filter_list)){
     model %>% 
-      residual_block(filters = filter_list[i], pooling = pool_list)
+      residual_block(filters = filter_list[i], pooling = pool_list[i])
   }
   model %>% 
     layer_global_average_pooling_2d() %>% 
