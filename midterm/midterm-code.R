@@ -8,11 +8,6 @@
 #np <- import('numpy')
 #pd <- import('pandas')
 
-#library(jpeg)
-#library(png)
-#library(stringr)
-
-
 ##### wrapped functions #####
 get.dataset1 <- function(){
   data = pd$read_csv('All_Script_Str(1-42)Frac(51-52)Mor(53-124)-1-116.csv')
@@ -160,7 +155,14 @@ build_cnn_model_bn <- function(filter_list, pool_list, dropout = 0){
 
 build_cnn_model_resid <- function(filter_list, pool_list, dropout = 0){
   model <- keras_model_sequential()
-  model %>% residual_b
+  for (i in 1:length(filter_list)){
+    model %>% 
+      residual_block(filters = filter_list[i], pooling = pool_list)
+  }
+  model %>% 
+    layer_global_average_pooling_2d() %>% 
+    layer_dense(1, activation = 'sigmoid')
+  return(model)
 }
 
 residual_block <- function(x, filters, pooling = FALSE) {
