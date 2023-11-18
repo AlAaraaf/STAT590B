@@ -14,6 +14,7 @@ filelist = read.in.all.file(classlist)
 dataset2 = get.dataset2(filelist, 0.9)
 
 filter_list = c(32,64,128)
+pool_list = c(T,T,F)
 lrlist = c(0.001, 0.01, 0.05)
 
 metric_record = c()
@@ -25,7 +26,7 @@ for (lr in lrlist[1]){
                                                 save_best_only = T,
                                                 monitor = 'val_accuracy',
                                                 mode = 'max')
-    model <- build_cnn_model_resid(filter_list)
+    model <- build_cnn_model_resid(filter_list, pool_list)
     model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
                              loss = "binary_crossentropy",
                              metrics =  list("accuracy"))
