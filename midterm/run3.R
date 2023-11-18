@@ -34,11 +34,11 @@ for (lr in lrlist){
     current_history <- model |>
       fit(x = dataset2$train$data, 
           y = dataset2$train$class,
-          epochs = 20, batch_size = 512, validation_split = 0.5,
+          epochs = 10, batch_size = 512, validation_split = 0.5,
           callbacks = list(model_cp))
     val_acc = max(current_history$metrics$val_accuracy)
     train_acc = max(current_history$metrics$accuracy)
-    current_record = c(lr, i, val_acc, train_acc)
+    current_record = c(lr, current_size, val_acc, train_acc)
     metric_record = rbind(metric_record, current_record)
   }
 }
