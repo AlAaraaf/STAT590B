@@ -46,7 +46,7 @@ for (lr in lrlist){
             callbacks = list(model_cp))
       val_acc = c(val_acc, max(current_history$metrics$val_accuracy))
     }
-    current_record = c(lr, i, val_acc)
+    current_record = c(lr, i, mean(val_acc))
     metric_record = rbind(metric_record, current_record)
   }
 }
