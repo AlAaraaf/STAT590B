@@ -31,14 +31,16 @@ get.dataset1 <- function(){
   return(dataset)
 }
 
-build_ff_model1 <- function(nlayers, unitlist){
+build_ff_model1 <- function(nlayers, unitlist, dropout = 0){
   model <- keras_model_sequential(input_shape = c(116))
   
   for (i in 1:nlayers){
-    model %>% layer_dense(units = unitlist[i], activation = 'relu')
+    model %>% 
+      layer_dense(units = unitlist[i], activation = 'relu')
   }
   
   model %>%
+    layer_dropout(rate = dropout)
     layer_dense(11, activation = 'softmax')
   
   return(model)
