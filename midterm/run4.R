@@ -24,7 +24,7 @@ metric_record = c()
 for (lr in lrlist){
   for (i in 1:3){
     val_acc = c()
-    model_name = paste(checkpoint_folder, 'q2b_',lr,'_',current_size,'filter', sep = '')
+    model_name = paste(checkpoint_folder, 'q2b_',lr,'_','filterlist', i, sep = '')
     model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                                 save_weights_only = T,
                                                 save_best_only = T,
