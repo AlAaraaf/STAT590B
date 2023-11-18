@@ -40,7 +40,7 @@ build_ff_model1 <- function(nlayers, unitlist, dropout = 0){
   }
   
   model %>%
-    layer_dropout(rate = dropout)
+    layer_dropout(rate = dropout) %>% 
     layer_dense(11, activation = 'softmax')
   
   return(model)
