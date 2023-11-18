@@ -38,7 +38,7 @@ for (lr in lrlist){
       current_history <- model |>
         fit(x = dataset2$train$data, 
             y = dataset2$train$class,
-            epochs = 20, batch_size = 512, validation_split = 0.5,
+            epochs = 20, batch_size = 128, validation_split = 0.5,
             callbacks = list(model_cp))
       val_acc = c(val_acc, max(current_history$metrics$val_accuracy))
     }
