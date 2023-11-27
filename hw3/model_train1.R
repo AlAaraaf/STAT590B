@@ -53,3 +53,8 @@ historys <- model |>
       y = dataset$train$class,
       epochs = 100, batch_size = 256, validation_split = 0.5,
       callbacks = list(model_cp))
+
+
+metric_record = data.frame(trainacc = historys$metrics$accuracy,
+                           valacc = historys$metrics$val_accuracy)
+write.csv(metric_record, 'record1.csv')

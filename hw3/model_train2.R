@@ -36,7 +36,7 @@ train_shape = c(224,224)
 filter_list = c(8,16,32,64,128)
 pool_list = c(T,T,T,T,F)
 
-model_name = paste(checkpoint_folder, 'data1_', lr,sep = '')
+model_name = paste(checkpoint_folder, 'data_resid_', lr,sep = '')
 model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                             save_weights_only = T,
                                             save_best_only = T,
@@ -53,3 +53,7 @@ historys <- model |>
       y = dataset$train$class,
       epochs = 100, batch_size = 256, validation_split = 0.5,
       callbacks = list(model_cp))
+
+metric_record = data.frame(trainacc = historys$metrics$accuracy,
+                           valacc = historys$metrics$val_accuracy)
+write.csv(metric_record, 'record2.csv')
