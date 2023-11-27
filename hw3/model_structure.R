@@ -34,8 +34,10 @@ build_cnn_model_resid <- function(filter_list, pool_list, img_shape = c(224, 224
   model %>%
     layer_resizing(height = img_shape[1], width = img_shape[2])
   for (i in 1:length(filter_list)){
-    model %>% 
-      residual_block(filters = filter_list[i], pooling = pool_list[i])
+    resid <- model
+    resid %>% 
+      layer_conv_2d(filters, 3, activation = "relu", padding = "same", strides = 2)
+    model %>% layer_add(c(model, resid))
   }
   model %>% 
     layer_global_average_pooling_2d() %>% 
