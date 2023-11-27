@@ -11,6 +11,7 @@ source('model_structure.R')
 setwd('/work/classtmp/carrice/STAT590B/hw3/')
 
 ##### get data #####
+cat('loading data: \n')
 folder = './data1/'
 classlist = c('bangla', 'devnagari')
 size = c(1000, 1000)
