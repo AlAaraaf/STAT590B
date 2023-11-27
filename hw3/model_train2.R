@@ -2,7 +2,6 @@
 library(reticulate)
 use_condaenv('connectr')
 library(tensorflow)
-tf <- import('tensorflow')
 library(keras)
 tf$config$run_functions_eagerly(T)
 library(tiff)
