@@ -20,7 +20,7 @@ sample_size$test = 10
 ag_size = list()
 ag_size$train = 10
 ag_size$test = 1
-dataset <- make.dataset(folder, classlist, size, sample_size, ag_size, readTIFF)
+dataset <- make.dataset1(folder, classlist, size, sample_size, ag_size, readTIFF)
 
 train_id = sample(dim(dataset$train$data)[1])
 dataset$train$data <- dataset$train$data[train_id,,,]

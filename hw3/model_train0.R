@@ -2,6 +2,7 @@
 library(reticulate)
 use_condaenv('connectr')
 library(tensorflow)
+tf <- import('tensorflow')
 library(keras)
 tf$config$run_functions_eagerly(T)
 library(tiff)
@@ -10,17 +11,13 @@ source('model_structure.R')
 setwd('/work/classtmp/carrice/STAT590B/hw3/')
 
 ##### get data #####
-cat('loading data: \n')
 folder = './data1/'
 classlist = c('bangla', 'devnagari')
 size = c(1000, 1000)
 sample_size = list()
 sample_size$train = 300
 sample_size$test = 10
-ag_size = list()
-ag_size$train = 10
-ag_size$test = 1
-dataset <- make.dataset1(folder, classlist, size, sample_size, ag_size, readTIFF)
+dataset <- make.dataset0(folder, classlist, size, sample_size, readTIFF)
 
 train_id = sample(dim(dataset$train$data)[1])
 dataset$train$data <- dataset$train$data[train_id,,,]
@@ -36,14 +33,14 @@ train_shape = c(224,224)
 filter_list = c(8,16,32,64,128)
 pool_list = c(T,T,T,T,F)
 
-model_name = paste(checkpoint_folder, 'data_resid_', lr,sep = '')
+model_name = paste(checkpoint_folder, 'data1_', lr,sep = '')
 model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                             save_weights_only = T,
                                             save_best_only = T,
                                             monitor = 'val_accuracy',
                                             mode = 'max')
 
-model <- build_cnn_model_resid(filter_list, pool_list, train_shape, dropout = dropout_rate)
+model <- build_cnn_model(filter_list, train_shape, dropout = dropout_rate)
 model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
                          loss = "binary_crossentropy",
                          metrics =  list("accuracy"))
@@ -54,6 +51,7 @@ historys <- model |>
       epochs = 100, batch_size = 256, validation_split = 0.5,
       callbacks = list(model_cp))
 
+
 metric_record = data.frame(trainacc = historys$metrics$accuracy,
                            valacc = historys$metrics$val_accuracy)
-write.csv(metric_record, 'record2.csv')
+write.csv(metric_record, 'record1.csv')

@@ -95,7 +95,71 @@ splice <- function(imglink, imgsize, readfunc, size, thres=0.9) {
   return(candidate)
 }
 
-make.dataset <- function(folder, classlist, size, sample_size, ag_size, readfunc){
+make.dataset0 <- function(folder, classlist, size, sample_size, readfunc){
+  trainset = list()
+  testset = list()
+  trainset$data = array(0, dim = c(sample_size$train, size[1],size[2], 3))
+  testset$data = array(0, dim = c(sample_size$test, size[1], size[2], 3))
+  trainset$class = c()
+  testset$class = c()
+  
+  filelink = c()
+  dataclass = c()
+  train_id = sample(1:(sample_size$train + sample_size$test), sample_size$train, replace = F)
+  
+  # get data links
+  for (i in 1:length(classlist)){
+    
+    current_class = classlist[i]
+    current_folder = paste(folder, current_class, '/', sep = '')
+    filelist = list.files(current_folder, full.names = T)
+    cur_data = sample(filelist, as.integer(0.5*(sample_size$train + sample_size$test)))
+    filelink = c(filelink, cur_data)
+    dataclass = c(dataclass, rep((i-1), length(cur_data)))
+  }
+  
+  datasource = data.frame(filedir = filelink, class = dataclass)
+  datasource = datasource[sample(dim(datasource)[1], dim(datasource)[1]),]
+  train_file = datasource[train_id,]
+  test_file = datasource[-train_id,]
+  
+  # get data
+  cat("get train data: ")
+  for (i in 1:dim(train_file)[1]){
+    current_file = train_file[i,]
+    
+    current_img <- readfunc(current_file$filedir)
+    imgsize = as.integer(size)
+    current_img <- tf$keras$preprocessing$image$smart_resize(current_img, imgsize)
+    trainset$data[i,,,] <- current_img
+    
+    cat(i ,' ')
+  }
+  cat('\n')
+  trainset$class = train_file$class
+  
+  cat('get test data: ')
+  for (i in 1:dim(test_file)[1]){
+    current_file = test_file[i,]
+    current_img <- readfunc(current_file$filedir)
+    imgsize = as.integer(size)
+    current_img <- tf$keras$preprocessing$image$smart_resize(current_img, imgsize)
+    testset$data[i,,,] <- current_img
+    
+    cat(i, ' ')
+  }
+  cat('\n')
+  testset$class = test_file$class
+  
+  
+  dataset = list()
+  dataset$train <-trainset
+  dataset$test <- testset
+  
+  return(dataset)
+}
+
+make.dataset1 <- function(folder, classlist, size, sample_size, ag_size, readfunc){
   trainset = list()
   testset = list()
   trainset$data = array(0, dim = c(sample_size$train*ag_size$train, 128,128, 3))
