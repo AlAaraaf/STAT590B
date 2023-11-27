@@ -29,8 +29,10 @@ residual_block <- function(x, filters, pooling = FALSE) {
   layer_add(list(x, residual))
 }
 
-build_cnn_model_resid <- function(filter_list, pool_list, dropout = 0){
+build_cnn_model_resid <- function(filter_list, pool_list, img_shape = c(224, 224),dropout = 0){
   model <- keras_model_sequential()
+  model %>%
+    layer_resizing(height = img_shape[1], width = img_shape[2])
   for (i in 1:length(filter_list)){
     model %>% 
       residual_block(filters = filter_list[i], pooling = pool_list)

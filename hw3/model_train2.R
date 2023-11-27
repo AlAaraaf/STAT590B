@@ -43,7 +43,7 @@ model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                             monitor = 'val_accuracy',
                                             mode = 'max')
 
-model <- build_cnn_model(filter_list, train_shape, dropout = dropout_rate)
+model <- build_cnn_model_resid(filter_list, pool_list, train_shape, dropout = dropout_rate)
 model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
                          loss = "binary_crossentropy",
                          metrics =  list("accuracy"))

@@ -135,10 +135,10 @@ make.dataset <- function(folder, classlist, size, sample_size, ag_size, readfunc
     }
     for (j in 1:ag_size$train){
       trainset$data[ind,,,] <- current_imglist[[j]]
-      cat(ind ,' ')
       ind = ind + 1
     }
     classlist = c(classlist, rep(current_file$class, 10))
+    cat(i ,' ')
   }
   cat('\n')
   trainset$class = classlist
@@ -154,10 +154,10 @@ make.dataset <- function(folder, classlist, size, sample_size, ag_size, readfunc
     }
     for (j in 1:ag_size$test){
       testset$data[ind,,,] <- current_imglist[[j]]
-      cat(ind, ' ')
       ind = ind + 1
     }
     classlist = c(classlist, rep(current_file$class, 10))
+    cat(i, ' ')
   }
   cat('\n')
   testset$class = classlist
