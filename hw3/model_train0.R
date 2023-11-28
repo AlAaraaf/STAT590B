@@ -57,7 +57,7 @@ for (i in 1:length(lr_list)){
                              loss = "binary_crossentropy",
                              metrics =  list("accuracy"))
     
-    historys <- model |>
+    current_history <- model |>
       fit(x = dataset$train$data, 
           y = dataset$train$class,
           epochs = epoch_list[i], batch_size = batch_list[i], validation_split = 0.5,
