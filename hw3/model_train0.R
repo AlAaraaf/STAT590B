@@ -2,7 +2,6 @@
 library(reticulate)
 use_condaenv('connectr')
 library(tensorflow)
-tf <- import('tensorflow')
 library(keras)
 tf$config$run_functions_eagerly(T)
 library(tiff)
@@ -27,31 +26,49 @@ dataset$train$class <- dataset$train$class[train_id]
 checkpoint_folder = './checkpoint/'
 historys = list()
 dropout_rate = 0
-lr = 0.001
+lr_list = c(0.05,0.01, 0.001)
+epoch_list = c(20, 50, 100)
+batch_list = c(128, 128, 256)
+
 train_shape = c(224,224)
 
-filter_list = c(8,16,32,64,128)
+filter_list <- list(2 ^ (3:4), 2 ^ (4:5),
+                    2 ^ (3:5), 2 ^ (4:6), 2 ^ (3:6), 2 ^ (4:7),
+                    2 ^ (5:8), 2 ^ (3:7), 2 ^ (3:8))
 pool_list = c(T,T,T,T,F)
 
-model_name = paste(checkpoint_folder, 'data1_', lr,sep = '')
-model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
-                                            save_weights_only = T,
-                                            save_best_only = T,
-                                            monitor = 'val_accuracy',
-                                            mode = 'max')
+metric_record = c()
 
-model <- build_cnn_model(filter_list, train_shape, dropout = dropout_rate)
-model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
-                         loss = "binary_crossentropy",
-                         metrics =  list("accuracy"))
-
-historys <- model |>
-  fit(x = dataset$train$data, 
-      y = dataset$train$class,
-      epochs = 100, batch_size = 256, validation_split = 0.5,
-      callbacks = list(model_cp))
-
-
-metric_record = data.frame(trainacc = historys$metrics$accuracy,
-                           valacc = historys$metrics$val_accuracy)
-write.csv(metric_record, 'record1.csv')
+for (i in 1:length(lr_list)){
+  for (j in 1:length(filter_list)){
+    lr = lr_list[i]
+    filter = filter_list[j]
+    
+    model_name = paste(checkpoint_folder, 'data1_', lr, '_filterid_', j, sep = '')
+    model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
+                                                save_weights_only = T,
+                                                save_best_only = T,
+                                                monitor = 'val_accuracy',
+                                                mode = 'max')
+    
+    model <- build_cnn_model(filter, train_shape, dropout = dropout_rate)
+    model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
+                             loss = "binary_crossentropy",
+                             metrics =  list("accuracy"))
+    
+    historys <- model |>
+      fit(x = dataset$train$data, 
+          y = dataset$train$class,
+          epochs = epoch_list[i], batch_size = batch_list[i], validation_split = 0.5,
+          callbacks = list(model_cp))
+    
+    
+    val_acc = max(current_history$metrics$val_accuracy)
+    train_acc = max(current_history$metrics$accuracy)
+    current_record = c(lr, j, val_acc, train_acc)
+    metric_record = rbind(metric_record, current_record)
+  }
+}
+metric_record = data.frame(metric_record)
+colnames(metric_record) <- c('lr', 'filter', 'val_acc','acc')
+write.csv(metric_record, 'record0.csv')

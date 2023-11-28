@@ -1,4 +1,5 @@
 build_cnn_model <- function(filter_list, img_shape = c(224, 224), dropout = 0.5){
+  k_clear_session()
   model <- keras_model_sequential()
   model %>%
     layer_resizing(height = img_shape[1], width = img_shape[2])
