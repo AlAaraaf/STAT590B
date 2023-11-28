@@ -73,6 +73,7 @@ for (i in 1:length(lr_list)){
     train_acc = max(current_history$metrics$accuracy)
     current_record = c(lr, j, val_acc, train_acc)
     metric_record = rbind(metric_record, current_record)
+    tf$keras$backend$clear_session()
     
     cat(current_record, '\n------------------------------------------\n')
     record_list = data.frame(metric_record)
