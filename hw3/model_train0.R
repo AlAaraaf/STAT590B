@@ -27,8 +27,8 @@ checkpoint_folder = './checkpoint/'
 historys = list()
 dropout_rate = 0
 lr_list = c(0.05,0.01, 0.001)
-epoch_list = c(20, 50, 100)
-batch_list = c(128, 128, 256)
+epoch_list = c(100, 100, 100)
+batch_list = c(256, 256, 256)
 
 train_shape = c(224,224)
 
@@ -70,8 +70,8 @@ for (i in 1:length(lr_list)){
     metric_record = rbind(metric_record, current_record)
     
     cat(current_record, '\n------------------------------------------\n')
+    record_list = data.frame(metric_record)
+    colnames(record_list) <- c('lr', 'filter', 'val_acc','acc')
+    write.csv(record_list, 'record0.csv')
   }
 }
-metric_record = data.frame(metric_record)
-colnames(metric_record) <- c('lr', 'filter', 'val_acc','acc')
-write.csv(metric_record, 'record0.csv')
