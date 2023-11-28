@@ -51,8 +51,10 @@ for (i in 1:length(lr_list)){
                                                 save_best_only = T,
                                                 monitor = 'val_accuracy',
                                                 mode = 'max')
-    model_es <- keras$callbacks$EarlyStopping(monitor = 'val_accuracy',
-                                              patience = 10, 
+    model_es <- keras$callbacks$EarlyStopping(monitor = 'val_loss',
+                                              mode = 'min',
+                                              patience = 10,
+                                              min_delta=0.0001,
                                               restore_best_weights = TRUE)
     
     model <- build_cnn_model(filter, train_shape, dropout = dropout_rate)
