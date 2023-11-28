@@ -45,6 +45,7 @@ for (i in 1:length(lr_list)){
     filter = filter_list[j]
     
     model_name = paste(checkpoint_folder, 'data1_', lr, '_filterid_', j, sep = '')
+    cat(model_name, '\n')
     model_cp <- keras$callbacks$ModelCheckpoint(filepath = model_name,
                                                 save_weights_only = T,
                                                 save_best_only = T,
@@ -67,6 +68,8 @@ for (i in 1:length(lr_list)){
     train_acc = max(current_history$metrics$accuracy)
     current_record = c(lr, j, val_acc, train_acc)
     metric_record = rbind(metric_record, current_record)
+    
+    cat(current_record, '\n------------------------------------------\n')
   }
 }
 metric_record = data.frame(metric_record)
