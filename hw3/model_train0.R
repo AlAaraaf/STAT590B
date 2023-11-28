@@ -42,7 +42,7 @@ metric_record = c()
 for (i in 1:length(lr_list)){
   for (j in 1:length(filter_list)){
     lr = lr_list[i]
-    filter = filter_list[j]
+    filter = filter_list[[j]]
     
     model_name = paste(checkpoint_folder, 'data1_', lr, '_filterid_', j, sep = '')
     cat(model_name, '\n')
