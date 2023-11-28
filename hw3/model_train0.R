@@ -26,9 +26,9 @@ dataset$train$class <- dataset$train$class[train_id]
 checkpoint_folder = './checkpoint/'
 historys = list()
 dropout_rate = 0
-lr_list = c(0.05,0.01, 0.001)
-epoch_list = c(100, 100, 100)
-batch_list = c(256, 256, 256)
+lr_list = c(0.01, 0.001)
+epoch_list = c(100, 100)
+batch_list = c(256, 256)
 
 train_shape = c(224,224)
 
@@ -78,6 +78,6 @@ for (i in 1:length(lr_list)){
     cat(current_record, '\n------------------------------------------\n')
     record_list = data.frame(metric_record)
     colnames(record_list) <- c('lr', 'filter', 'val_acc','acc')
-    write.csv(record_list, 'record0.csv')
+    write.csv(record_list, 'record01.csv')
   }
 }
