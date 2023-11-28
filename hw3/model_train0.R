@@ -51,6 +51,9 @@ for (i in 1:length(lr_list)){
                                                 save_best_only = T,
                                                 monitor = 'val_accuracy',
                                                 mode = 'max')
+    model_es <- keras$callbacks$EarlyStopping(monitor = 'val_accuracy',
+                                              patience = 10, 
+                                              restore_best_weights = TRUE)
     
     model <- build_cnn_model(filter, train_shape, dropout = dropout_rate)
     model %>% keras::compile(optimizer = optimizer_rmsprop(learning_rate = lr),
@@ -61,7 +64,7 @@ for (i in 1:length(lr_list)){
       fit(x = dataset$train$data, 
           y = dataset$train$class,
           epochs = epoch_list[i], batch_size = batch_list[i], validation_split = 0.5,
-          callbacks = list(model_cp))
+          callbacks = list(model_cp, model_es))
     
     
     val_acc = max(current_history$metrics$val_accuracy)
